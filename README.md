@@ -1,11 +1,76 @@
-# Sample Snack app
+# Expo Testing App
 
-Open the `App.js` file to start writing some code. You can preview the changes directly on your phone or tablet by scanning the **QR code** or use the iOS or Android emulators. When you're done, click **Save** and share the link!
+Hybrid mobile app built with Expo to test web checkout integrations inside a mobile-like environment.
 
-When you're ready to see everything that Expo provides (or if you want to use your own editor) you can **Download** your project and use it with [expo cli](https://docs.expo.dev/get-started/installation/#expo-cli)).
+The app allows you to:
 
-All projects created in Snack are publicly available, so you can easily share the link to this project via link, or embed it on a web page with the `<>` button.
+- Open a URL inside an in-app WebView
+- Open a URL in the device's external Browser
+- Test mobile web flows quickly using a real device
 
-If you're having problems, you can tweet to us [@expo](https://twitter.com/expo) or ask in our [forums](https://forums.expo.dev/c/expo-dev-tools/61) or [Discord](https://chat.expo.dev/).
+---
 
-Snack is Open Source. You can find the code on the [GitHub repo](https://github.com/expo/snack).
+## Requirements
+
+- Node.js (LTS recommended)
+- npm installed
+- Expo Go installed on your phone (Android or iOS)
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/placetopay-org/expo-testing-app.git
+cd expo-testing-app
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+---
+
+## Run the Project
+
+Start the development server:
+
+```bash
+npx expo start
+```
+
+This will generate a QR code in the terminal and browser.
+
+---
+
+## Run on a Physical Device
+
+1. Open **Expo Go** on your phone.
+2. Scan the QR code shown after running:
+
+```bash
+npx expo start
+```
+
+The app will load automatically.
+
+---
+
+## Run on Emulator
+
+After starting the project:
+
+- Press `a` → Android emulator
+- Press `i` → iOS simulator _(Mac only)_
+
+---
+
+## Optional: Run in Snack
+
+This project can also be adapted to run in [Snack](https://snack.expo.dev) for quick demos.
+
+> **Note:** Snack may not support the latest Expo SDK versions. For consistent results, use `npx expo start`.
