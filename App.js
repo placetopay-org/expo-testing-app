@@ -8,56 +8,96 @@ import {
   StatusBar,
   Platform,
   Linking,
+  Alert,
 } from "react-native";
 import { WebView } from "react-native-webview";
+import InAppBrowser from "react-native-inappbrowser-reborn";
 
 export default function App() {
   const [inputUrl, setInputUrl] = useState("");
   const [activeUrl, setActiveUrl] = useState("");
-  const [mode, setMode] = useState("webview"); // 'webview' | 'browser'
+  const [mode, setMode] = useState("webview"); // 'webview' | 'inapp' | 'browser'
 
-  const handleGo = () => {
-    const url = inputUrl.startsWith("http") ? inputUrl : `https://${inputUrl}`;
+  const normalizeUrl = (url) =>
+    url.startsWith("http") ? url : `https://${url}`;
+
+  const handleGo = async () => {
+    const url = normalizeUrl(inputUrl);
+
     if (mode === "browser") {
       Linking.openURL(url);
+    } else if (mode === "inapp") {
+      console.log("here", InAppBrowser);
+      try {
+        if (await InAppBrowser.isAvailable()) {
+          await InAppBrowser.open(url, {
+            // iOS
+            dismissButtonStyle: "close",
+            preferredBarTintColor: "#111",
+            preferredControlTintColor: "#3b82f6",
+            readerMode: false,
+            animated: true,
+            modalPresentationStyle: "fullScreen",
+            modalTransitionStyle: "coverVertical",
+            modalEnabled: true,
+            enableBarCollapsing: false,
+            // Android
+            showTitle: true,
+            toolbarColor: "#111",
+            secondaryToolbarColor: "#222",
+            navigationBarColor: "#111",
+            navigationBarDividerColor: "#333",
+            enableUrlBarHiding: true,
+            enableDefaultShare: true,
+            forceCloseOnRedirection: false,
+            animations: {
+              startEnter: "slide_in_right",
+              startExit: "slide_out_left",
+              endEnter: "slide_in_left",
+              endExit: "slide_out_right",
+            },
+          });
+        } else {
+          // Fallback si no está disponible
+          Linking.openURL(url);
+        }
+      } catch (error) {
+        Alert.alert("Error", error.message);
+      }
     } else {
       setActiveUrl(url);
     }
   };
 
+  const modes = [
+    { key: "webview", label: "WebView" },
+    { key: "inapp", label: "Browser InApp" },
+    { key: "browser", label: "Browser" },
+  ];
+
   return (
     <View style={styles.container}>
-      {/* Select mode */}
+      {/* Selector de modo */}
       <View style={styles.modeBar}>
-        <TouchableOpacity
-          style={[styles.modeBtn, mode === "webview" && styles.modeBtnActive]}
-          onPress={() => setMode("webview")}
-        >
-          <Text
-            style={[
-              styles.modeBtnText,
-              mode === "webview" && styles.modeBtnTextActive,
-            ]}
+        {modes.map(({ key, label }) => (
+          <TouchableOpacity
+            key={key}
+            style={[styles.modeBtn, mode === key && styles.modeBtnActive]}
+            onPress={() => setMode(key)}
           >
-            WebView
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.modeBtn, mode === "browser" && styles.modeBtnActive]}
-          onPress={() => setMode("browser")}
-        >
-          <Text
-            style={[
-              styles.modeBtnText,
-              mode === "browser" && styles.modeBtnTextActive,
-            ]}
-          >
-            Browser
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.modeBtnText,
+                mode === key && styles.modeBtnTextActive,
+              ]}
+            >
+              {label}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
-      {/* URL */}
+      {/* Barra de URL */}
       <View style={styles.bar}>
         <TextInput
           style={styles.input}
@@ -80,7 +120,13 @@ export default function App() {
         <WebView source={{ uri: activeUrl }} style={{ flex: 1 }} />
       ) : (
         <View style={styles.empty}>
-          <Text style={styles.emptyText}>Ingresa una URL y presiona Ir</Text>
+          <Text style={styles.emptyText}>
+            {mode === "inapp"
+              ? "Ingresa una URL — se abrirá el browser nativo"
+              : mode === "browser"
+                ? "Ingresa una URL — se abrirá el browser externo"
+                : "Ingresa una URL y presiona Ir"}
+          </Text>
         </View>
       )}
     </View>
@@ -126,6 +172,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   btnText: { color: "#fff", fontWeight: "bold" },
-  empty: { flex: 1, justifyContent: "center", alignItems: "center" },
-  emptyText: { color: "#444" },
+  empty: { flex: 1, justifyContent: "center", alignItems: "center", gap: 6 },
+  emptyText: { color: "#444", textAlign: "center", paddingHorizontal: 32 },
 });
