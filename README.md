@@ -5,8 +5,27 @@ Hybrid mobile app built with Expo to test web checkout integrations inside a mob
 The app allows you to:
 
 - Open a URL inside an in-app WebView
+- Open a URL using an in-app browser (system modal)
 - Open a URL in the device's external Browser
 - Test mobile web flows quickly using a real device
+
+---
+
+## Features
+
+The app provides three execution modes:
+
+1. WebView
+   Loads the URL inside an embedded WebView.
+   Useful for testing embedded checkout flows, redirects, and WebView compatibility.
+
+2. Browser In-App
+   Opens the URL using the device’s in-app browser (Expo WebBrowser).
+   Uses Android Custom Tabs or iOS Safari View Controller, useful for testing secure flows like 3DS.
+
+3. Browser
+   Opens the URL in the device’s default external browser.
+   Helpful for comparing behavior with a normal mobile browsing session.
 
 ---
 
