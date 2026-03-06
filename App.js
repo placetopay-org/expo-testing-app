@@ -10,19 +10,24 @@ import {
   Linking,
 } from "react-native";
 import { WebView } from "react-native-webview";
+import * as WebBrowser from "expo-web-browser";
 
 export default function App() {
   const [inputUrl, setInputUrl] = useState("");
   const [activeUrl, setActiveUrl] = useState("");
-  const [mode, setMode] = useState("webview"); // 'webview' | 'browser'
+  const [mode, setMode] = useState("webview"); // 'webview' | 'browser' | 'inapp'
 
-  const handleGo = () => {
+  const handleGo = async () => {
     const url = inputUrl.startsWith("http") ? inputUrl : `https://${inputUrl}`;
     if (mode === "browser") {
       Linking.openURL(url);
-    } else {
-      setActiveUrl(url);
+      return;
     }
+    if (mode === "inapp") {
+      await WebBrowser.openBrowserAsync(url);
+      return;
+    }
+    setActiveUrl(url);
   };
 
   return (
@@ -40,6 +45,20 @@ export default function App() {
             ]}
           >
             WebView
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.modeBtn, mode === "inapp" && styles.modeBtnActive]}
+          onPress={() => setMode("inapp")}
+        >
+          <Text
+            style={[
+              styles.modeBtnText,
+              mode === "inapp" && styles.modeBtnTextActive,
+            ]}
+          >
+            Browser InApp
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -68,7 +87,7 @@ export default function App() {
           autoCorrect={false}
           keyboardType="url"
           returnKeyType="go"
-          placeholder="https://tu-ngrok-url.app"
+          placeholder="https://url.com"
           placeholderTextColor="#555"
         />
         <TouchableOpacity style={styles.btn} onPress={handleGo}>
